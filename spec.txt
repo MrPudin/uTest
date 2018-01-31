@@ -1,0 +1,17 @@
+[μTest - Tiny Test/debugging Framework for the Microbit]
+Small tset harness for c/c++ development on the Microbit platform
+
+[Design]
+int test_func(){
+    ASSERT_TRUE() - assert true or fail test
+    ASSERT_EQUAL() - assert equal
+    DPRINT() - debug print  
+    DPRINTF() - debug printf
+} - a test.
+
+int main()
+{
+    TEST_BEGIN - setup test state varaibles
+    TEST(test_func, 1) - fails  if the func does not resturn one.
+    TEST_END
+}
