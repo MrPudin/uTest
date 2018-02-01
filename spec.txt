@@ -1,10 +1,12 @@
 [μTest - Tiny Test/debugging Framework for the Microbit]
 Small tset harness for c/c++ development on the Microbit platform
 
-[Design]
-int test_func(){
-    ASSERT_TRUE() - assert true or fail test
-    ASSERT_EQUAL() - assert equal
+[Design]]
+void test_func(){
+    TEST_ASSERT_TRUE() - assert true or fail test
+    TEST_ASSERT_EQUAL() - assert equal or fail test
+    TEST_ASSERT_FALSE() - assert false or fail test
+    TEST_ASSERT_NOTEQUAL() - assert not equal or fail test.
     DPRINT() - debug print  
     DPRINTF() - debug printf
 } - a test.
@@ -13,5 +15,66 @@ int main()
 {
     TEST_BEGIN - setup test state varaibles
     TEST(test_func, 1) - fails  if the func does not resturn one.
-    TEST_END
+    TEST_END - test cleanup and print test report.
 }
+
+Each test is defined as void (*test_func)() function: the test harness catches 
+the following failure conditions.
+The TEST macro is used to execute a test function.
+1.TEST_FAIL executes at any point of the code.
+2 Any TEST_ASSERT... macro fails its condition.
+3.Any uncaught deadly signal - any signal that will cause the process to 
+terminate.
+The whole test is marked as failure when any of the above conditions are found 
+to be true.
+
+After running all the test functions, the test harness will print out a report
+summarising the test run, giving infomation such as number of test run, 
+execution time, whether the test passed or failed, what was the cause of its failure,
+and where  did the function failure etc.
+
+Testing Complete!
+_______TEST REPORT________
+test_func_fail() - FAIL [100ms]
+    2: Assert Equals failed failed: 2 equal 3.
+test_func_pass() - PASS [100ms]
+===========================
+2 Tests Run.
+---
+PASSED 1.
+FAILED 2.
+---
+Overlall FAIL.
+_______END TEST REPORT_____
+
+[Implementation]
+Test State - Test state is stored as linked list struture:
+{
+    name - the name of the function of the test
+    func -  function pointer to the test function
+    status - whether the test succeeded or failed.
+    reason - reason of the status, ie if the test failed why did it fail?
+    line - line number of the failure if nay
+    time - double of the time in seconds it took to run the test
+    jmp - the jmpbuf to use when the test fails, to jump out of the test function
+    next - pointer to the next item of the linked list.
+}
+
+There would always be a global pointer _test_state_current that points to the 
+Test State of the current test
+
+When a test fails, the failing condition will set the status, the reason, the 
+line, of the failing test. Then it would jump out of the test function using 
+longjmp. A prelimary check would reveal the test status set to false which means
+it already failed, allowing the next test to be excuted.
+
+Timing the function would be dnoe by both clock() and time() + difftime()
+library calls, allowing the test harness to show precsion with clock() when the
+test run time is short, but also prevent overflow errors when clock() overflows 
+after 72 mins. The report generator would automatically find the time unit most
+suited to displaying execution time, and display accrodingly
+1. Minute
+2. Second
+3. Milisecond
+4. Microsecond
+
