@@ -1,6 +1,6 @@
 # μTest - C/C++ Test Harnesss / Debugging Utilities
 ---
-## Intro 
+### Intro 
 A small test harness for testing on the embeded devices such as the Microbit,
 plus debugging Utilities to facilitate the development of reliable solutions 
 on these devices. The test harness also generates reports on the test run:
@@ -27,16 +27,16 @@ Test test_wrong_pow() - FAIL@49 [10.000 us]
 
 On the MicroBit, μTest automatically redicts output to MicroBit serial output.
 
-## Usage
+### Usage
 An example test program using μTest's test harness would look something like 
 this:
 ```c
 #include "utest.h"
 void test_func(TestState* _state_){
-    TEST_TRUE(1 == 1) // assert true or fail test
-    TEST_EQUAL(1, 1) // assert equal or fail test
-    TEST_FALSE(1 == 2) // assert false or fail test
-    TEST_NOT_EQUAL(1, 2) // assert not equal or fail test.
+    TEST_TRUE(1 == 1); // assert true or fail test
+    TEST_EQUAL(1, 1); // assert equal or fail test
+    TEST_FALSE(1 == 2); // assert false or fail test
+    TEST_NOT_EQUAL(1, 2); // assert not equal or fail test.
 } // a test.
 
 int main()
@@ -45,14 +45,15 @@ int main()
     //....
 
     //Testing
-    TEST_BEGIN // setup test enviroment
-    TEST(test_func) // run test 'test_func'
-    TEST_END // test cleanup and print test report.
+    TEST_BEGIN; // setup test enviroment
+    TEST(test_func); // run test 'test_func'
+    TEST_END; // test cleanup and print test report.
 
     //Cleanup Code
     //....
 }
 ```
+
 
 μTest also provides debug prints, which print addtional infomation such as the
 the line number and function name when printing. These debug prints can be 
@@ -65,13 +66,13 @@ DPRINT("debugging infomation"); //Print with newline, func name and line number
 DMEM_DUMP(data, 88, 1); //Dump 80 bytes of data
 ```
 
-# Installation
+### Installation
 Run `make docs` for documentation at `build/docs`
 
 Just include `src/utest.h` for the defintions. When compiling link against 
 `src/utest.c`
 
-# Misc
+### Misc
 Roses are red.
 Violets are blue.
 But Im bleeding on the inside,
