@@ -1,5 +1,5 @@
 #define DEBUG
-#include "src/utest.h"
+#include "utest.h"
 
 double norm_pow(double x, int exp)
 {
@@ -66,7 +66,7 @@ int main()
     TEST_BEGIN;
     TEST(test_norm_pow);
     TEST(test_log_pow);
- //   TEST(test_sigint_pow);
-//    TEST(test_wrong_pow);
+    TEST(test_sigint_pow);
+    TEST(test_wrong_pow);
     TEST_END;
 }
