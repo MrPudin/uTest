@@ -260,7 +260,7 @@ void _test_fail(const char *msg, int line);
 */
 #define TEST_TRUE(cond) \
     do{ \
-        if(!cond) \
+        if(!( cond )) \
         {_test_fail("TEST_TRUE: Condition False: " #cond, __LINE__);} \
     }while(0)
  
@@ -290,10 +290,11 @@ void _test_fail(const char *msg, int line);
 */
 #define TEST_FALSE(cond) \
     do{ \
-        if(cond) \
+        if(( cond )) \
         {_test_fail("TEST_FALSE: Condition True: " #cond, __LINE__);} \
     }while(0)
 
+#define EXTRA
 /** @def TEST_NOT_EQUAL
  *  Test whether the given two arguments are not equal, or fail the test if 
  *  proven otherwise.
@@ -305,11 +306,12 @@ void _test_fail(const char *msg, int line);
 */
 #define TEST_NOT_EQUAL(lhs, rhs)\
     do{ \
-        if(lhs != rhs) \
+        if(lhs == rhs) \
         {_test_fail("TEST_NOT_EQUAL: Arguments equal: " #lhs " EQUAL " #rhs,\
             __LINE__); } \
     }while(0)
 
 //@}
+
 
 #endif /* ifndef UTEST_H */
