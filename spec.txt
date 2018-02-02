@@ -1,21 +1,30 @@
 [μTest - Tiny Test/debugging Framework for the Microbit]
-Small tset harness for c/c++ development on the Microbit platform
+Small tset harness for c/c++ development on the Microbit platform. 
+Simplies the process of writing test functions with macros, and measures certain
+area of interests for the user, such as the execution time, which line the test
+failed etc. Prints out a test report at the end for the user to measure how many
+test succeeded, failed, along with infomation on why and where they failed.
 
 [Design]]
 void test_func(){
-    TEST_ASSERT_TRUE() - assert true or fail test
-    TEST_ASSERT_EQUAL() - assert equal or fail test
-    TEST_ASSERT_FALSE() - assert false or fail test
-    TEST_ASSERT_NOTEQUAL() - assert not equal or fail test.
-    DPRINT() - debug print  
-    DPRINTF() - debug printf
+    TEST_TRUE() - assert true or fail test
+    TEST_EQUAL() - assert equal or fail test
+    TEST_FALSE() - assert false or fail test
+    TEST_NOTEQUAL() - assert not equal or fail test.
 } - a test.
 
 int main()
 {
-    TEST_BEGIN - setup test state varaibles
-    TEST(test_func, 1) - fails  if the func does not resturn one.
+    //Setup Code
+    ....
+
+    //Testing
+    TEST_BEGIN - setup test state
+    TEST(test_func) - run test 'test_func'
     TEST_END - test cleanup and print test report.
+
+    //Cleanup Code
+    ....
 }
 
 Each test is defined as void (*test_func)() function: the test harness catches 
