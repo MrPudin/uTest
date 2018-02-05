@@ -133,10 +133,12 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
  *  @code{c}
  *  #include "utest.h"
  *  void test_func(TestState* _state_){
- *      TEST_TRUE() // assert true or fail test
- *      TEST_EQUAL() // assert equal or fail test
- *      TEST_FALSE() // assert false or fail test
- *      TEST_NOT_EQUAL() // assert not equal or fail test.
+ *      TEST_TRUE(1 == 1); // assert true or fail test
+ *      TEST_EQUAL(1, 1); // assert equal or fail test
+ *      TEST_FALSE(1 == 2); // assert false or fail test
+ *      TEST_NOT_EQUAL(1, 2); // assert not equal or fail test.
+ *      TEST_MEM_EQUAL("meh","meh",4)// assert memory equal or fail test
+ *      TEST_NOT_MEM_EQUAL("meh", "neh", 4) //assert memory not equal or fail test 
  *  } // a test.
  *  
  *  int main()
@@ -264,6 +266,20 @@ void _test_fail(const char *msg, int line);
         {_test_fail("TEST_TRUE: Condition False: " #cond, __LINE__);} \
     }while(0)
  
+/** @def TEST_FALSE
+ *  Test whether the given condition is false or fail the test if proven 
+ *  otherwise.
+ *  Would automatically generate a failure message if the condition is true, 
+ *  explaining why the test fails.
+ *
+ *  @param cond The condition to test for validity
+*/
+#define TEST_FALSE(cond) \
+    do{ \
+        if(( cond )) \
+        {_test_fail("TEST_FALSE: Condition True: " #cond, __LINE__);} \
+    }while(0)
+
 /** @def TEST_EQUAL
  *  Test whether the given two arguments are equal, or fail the test if proven
  *  otherwise.
@@ -280,21 +296,6 @@ void _test_fail(const char *msg, int line);
             __LINE__); } \
     }while(0)
 
-/** @def TEST_FALSE
- *  Test whether the given condition is false or fail the test if proven 
- *  otherwise.
- *  Would automatically generate a failure message if the condition is true, 
- *  explaining why the test fails.
- *
- *  @param cond The condition to test for validity
-*/
-#define TEST_FALSE(cond) \
-    do{ \
-        if(( cond )) \
-        {_test_fail("TEST_FALSE: Condition True: " #cond, __LINE__);} \
-    }while(0)
-
-#define EXTRA
 /** @def TEST_NOT_EQUAL
  *  Test whether the given two arguments are not equal, or fail the test if 
  *  proven otherwise.
@@ -310,6 +311,43 @@ void _test_fail(const char *msg, int line);
         {_test_fail("TEST_NOT_EQUAL: Arguments equal: " #lhs " EQUAL " #rhs,\
             __LINE__); } \
     }while(0)
+
+/** @def TEST_MEM_EQUAL
+ *  Test whether the blobs of memory given by the two passed pointer are equal, 
+ *  or fail the test if proven otherwise. The memory blobs should 
+ *  be of the given size
+ *  Would automatically generate a failure message if the arguments are not 
+ *  equal explaining why the test fails.
+ *
+ *  @param lhs The left or first pointer used in the memory comparision test
+ *  @param rhs The right or second pointer used in the memory test
+ *  @param size The size of the memory blobs to compare
+*/
+#define TEST_MEM_EQUAL(lhs, rhs, size) \
+    do{ \
+        if(memcmp((void *)lhs, (void *)rhs, (size_t)size) != 0) \
+        { _test_fail("TEST_EQUAL: Arguments not equal: " #lhs " NOT EQUAL " #rhs,\
+            __LINE__); } \
+    }while(0)
+
+/** @def TEST_NOT_MEM_EQUAL
+ *  Test whether the blobs of memory given by the two passed pointer are equal, 
+ *  or fail the test if proven otherwise. The memory blobs should be of the 
+ *  given size.
+ *  Would automatically generate a failure message if the arguments are equal 
+ *  explaining why the test fails.
+ *
+ *  @param lhs The left or first argument used in the comparision test
+ *  @param rhs The right or second argument used in the comparision test
+ *  @param size The size of the memory blobs to compare
+*/
+#define TEST_NOT_MEM_EQUAL(lhs, rhs, size)\
+    do{ \
+        if(memcmp((void *)lhs, (void *)rhs, (size_t)size) == 0) \
+        {_test_fail("TEST_NOT_EQUAL: Arguments equal: " #lhs " EQUAL " #rhs,\
+            __LINE__); } \
+    }while(0)
+
 
 //@}
 

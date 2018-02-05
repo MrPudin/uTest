@@ -7,10 +7,12 @@ test succeeded, failed, along with infomation on why and where they failed.
 
 [Design]]
 void test_func(){
-    TEST_TRUE() - assert true or fail test
-    TEST_EQUAL() - assert equal or fail test
-    TEST_FALSE() - assert false or fail test
-    TEST_NOTEQUAL() - assert not equal or fail test.
+    TEST_TRUE(1 == 1); // assert true or fail test
+    TEST_EQUAL(1, 1); // assert equal or fail test
+    TEST_FALSE(1 == 2); // assert false or fail test
+    TEST_NOT_EQUAL(1, 2); // assert not equal or fail test.
+    TEST_MEM_EQUAL("meh","meh",4)// assert memory equal or fail test
+    TEST_NOT_MEM_EQUAL("meh", "neh", 4) //assert memory not equal or fail test 
 } - a test.
 
 int main()

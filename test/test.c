@@ -49,6 +49,12 @@ void test_wrong_pow()
     TEST_EQUAL(wrong_pow(2, 100), 1267650600228229401496703205376.0);
 }
 
+void test_mem()
+{
+    TEST_MEM_EQUAL("hello", "hello", 5);
+    TEST_NOT_MEM_EQUAL("hello", "linux", 5);
+}
+
 int main()
 {
     DPRINT("Testing Debugging Utilities");
@@ -62,11 +68,15 @@ int main()
     DPRINTF("I have %d toes\r\n", 10);
     
     DPRINT("Testing Test Harness");
+    
 
     TEST_BEGIN;
     TEST(test_norm_pow);
     TEST(test_log_pow);
     TEST(test_sigint_pow);
     TEST(test_wrong_pow);
+    TEST(test_mem);
     TEST_END;
+
+    DPRINTF("Test result: %d\n", memcmp((void *)"hello", (void *)"hello", (size_t)5));
 }

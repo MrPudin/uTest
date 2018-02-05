@@ -37,6 +37,8 @@ void test_func(TestState* _state_){
     TEST_EQUAL(1, 1); // assert equal or fail test
     TEST_FALSE(1 == 2); // assert false or fail test
     TEST_NOT_EQUAL(1, 2); // assert not equal or fail test.
+    TEST_MEM_EQUAL("meh","meh",4)// assert memory equal or fail test
+    TEST_NOT_MEM_EQUAL("meh", "neh", 4) //assert memory not equal or fail test 
 } // a test.
 
 int main()
