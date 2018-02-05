@@ -43,7 +43,10 @@ $(BUILD_OBJ)%.o: $(SRC_TEST)%.c $(BUILD_OBJ)
 $(BUILD_OBJ):
 	mkdir -p $@
 
-$(BUILD_DIR)%.dep: %.c
+$(BUILD_DIR):
+	mkdir -p $@
+
+$(BUILD_DIR)%.dep: %.c $(BUILD_DIR)
 	$(DEPEND) $< >$@
 	
 clean:

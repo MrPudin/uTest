@@ -1,4 +1,5 @@
 #ifndef UTEST_H
+#define UTEST_H
 /**
  * @file src/utest.h
  * Declares the functionality provided by the μTest framework 
@@ -55,24 +56,24 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
 #define DMEM_DUMP(ptr, size, blklen)\
     _debug_mem_dump(ptr, size, blklen, __func__, __LINE__)
 
-#ifndef MICROBIT_H 
-#define DPRINT(msg) printf("DEBUG: %s: %d: %s\n",__func__,__LINE__, msg)
-#define DPRINTF(...) printf("DEBUG: " __VA_ARGS__)
-
-#else
+#ifdef MICROBIT_H 
+#undef printf
 #define DPRINT(msg) \
     do { \
         MicroBit __uBit__; \
-        __uBit__.serial.printf("DEBUG: %s: %d: %s\r\n",__func__,__LINE__,msg) \
+        __uBit__.serial.printf("DEBUG: %s: %d: %s\r\n",__func__,__LINE__,msg); \
     } while (0)
 
 #define DPRINTF(...) \
     do { \
         MicroBit __uBit__;\
-        __uBit__.serial.printf("DEBUG: " __VA_ARGS__) \
+        __uBit__.serial.printf("DEBUG: " __VA_ARGS__); \
     } while (0)
 
-#endif /* ifndef MICROBIT_H */
+#else
+#define DPRINT(msg) printf("DEBUG: %s: %d: %s\n",__func__,__LINE__, msg)
+#define DPRINTF(...) printf("DEBUG: " __VA_ARGS__)
+#endif /* ifdef MICROBIT_H */
 
 #else
 /** @def DPRINT
@@ -185,12 +186,6 @@ typedef struct test_state_t TestState;
     #define thread_local //thread_local expands to nothing
 #endif /* ifndef thread_local */
 
-/** Pointer to the TesState of the current test @private */
-#ifdef thread_local
-    extern thread_local TestState *_current_test_state;
-#else
-    extern TestState *_current_test_state;
-#endif /* ifdef thread_local */
 
 /** @private */
 TestState *_test_setup();
@@ -234,7 +229,6 @@ void _test_cleanup(TestState **state);
     do{ \
         _test_report(_test_state); \
         _test_cleanup(&_test_state); \
-        _current_test_state = NULL; \
         _test_state = NULL; \
     }while(0)
 
@@ -350,6 +344,5 @@ void _test_fail(const char *msg, int line);
 
 
 //@}
-
 
 #endif /* ifndef UTEST_H */

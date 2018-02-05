@@ -6,12 +6,11 @@
 #include "utest.h"
 
 //Debugging Utilities
-#ifndef MICROBIT_H
-#define PRINTF printf
-#else
-static MicroBit uBit;
+#ifdef MICROBIT_H
 #define PRINTF uBit.serial.printf
-#endif /* ifndef MICROBIT_H */
+#else
+#define PRINTF printf
+#endif /* ifdef MICROBIT_H */
 
 
 void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, \
@@ -23,7 +22,7 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, \
     //Opening Header 
     PRINTF("DEBUG: %s: %d: %s",fname,line, "Memory Dump BEGIN");
 
-    const char *ptr = mptr;
+    const char *ptr = (const char *)mptr;
     
     //Dump Memory
     for(size_t pos = 0; pos < len; pos += blk)
@@ -53,9 +52,9 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, \
 #define TEST_LJMP_FAIL -1
 
 #ifdef thread_local
-    thread_local TestState *_current_test_state = NULL;
+    static thread_local TestState *_current_test_state = NULL;
 #else
-    TestState *_current_test_state = NULL;
+    static TestState *_current_test_state = NULL;
 #endif
 
 /** @private */
@@ -73,7 +72,7 @@ struct test_state_t
 
 void test_signal_handler(int sig)
 {
-    char *sbuf = malloc(sizeof(char) * 30);
+    char *sbuf = (char *)malloc(sizeof(char) * 30);
     snprintf(sbuf, sizeof(char) *30, "Caught Deadly Signal: %d", sig);
 
     if(sig == SIGHUP) snprintf(sbuf, sizeof(char) * 30, "Caught Signal: SIGHUP");
@@ -128,7 +127,7 @@ TestState *_test_setup()
     signal(SIGPROF, &test_signal_handler);
 
     //Setup Test State
-    TestState *tstate = malloc(sizeof(TestState));
+    TestState *tstate = (TestState *)malloc(sizeof(TestState));
     memset(tstate, 0, sizeof(TestState));
 
     return tstate;
@@ -142,7 +141,7 @@ void _test_run(TestState *tstate, TestFunc *tfunc, const char *fname)
     if(!_current_test_state) _current_test_state = tstate; //First Stuct not used
     else 
     {
-        _current_test_state->next = malloc(sizeof(TestState));
+        _current_test_state->next = (TestState *)malloc(sizeof(TestState));
         memset(_current_test_state->next, 0, sizeof(TestState));
         _current_test_state =  _current_test_state->next;
     }
@@ -195,7 +194,7 @@ void _test_fail(const char *msg, int line)
 
 char *human_readable_time(double tsec)
 {
-    char *htime = malloc(sizeof(char) * 10);
+    char *htime = (char *)malloc(sizeof(char) * 10);
 
     if(tsec > 60.0) 
     { snprintf(htime, sizeof(char) * 10, "%.3f min", tsec / 60.0); }
