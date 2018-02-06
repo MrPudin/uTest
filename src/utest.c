@@ -64,9 +64,9 @@ struct test_state_t
     uint16_t tpass;
 };
 
-/* Global Variable for test failure handling */
+/** @private Global Variable for test failure handling */
 #ifdef thread_local
-thread_local static TestState *_current_test_state;
+static thread_local TestState *_current_test_state;
 #else
 #warning uTest will not be thread safe: Thread local variables are not supported
 static TestState *_current_test_state;
@@ -223,8 +223,7 @@ void _test_report(TestState *tstate)
     { snprintf(sstatus, sizeof(char) * 20, "PASS"); }
 
     PRINTF("* Run %-30s - %s [%s]\r\n", tstate->name, sstatus, htime);
-    if(strnlen(tstate->reason, TEST_STATE_LIMIT_REASON_STRLEN) > 0)
-        PRINTF("!\t%s\r\n", tstate->reason);
+    if(!tstate->status) PRINTF("\t! %s\r\n", tstate->reason);
     free(htime);
 
     tstate->tlen ++;

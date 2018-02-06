@@ -56,8 +56,13 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
 #define DMEM_DUMP(ptr, size, blklen)\
     _debug_mem_dump(ptr, size, blklen, __func__, __LINE__)
 
-#ifdef MICROBIT_H 
+#if defined MICROBIT_H && defined __PXT_H
+/** PXT Header defines uBit as a global variable */
 #undef printf
+#define DPRINT(msg) uBit.serial.printf("DEBUG: %s: %d: %s\r\n",__func__,__LINE__,msg)
+#define DPRINTF(...) uBit.serial.printf("DEBUG: " __VA_ARGS__)
+
+#elif define MICROBIT_H
 #define DPRINT(msg) \
     do { \
         MicroBit __uBit__; \
