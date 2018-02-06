@@ -56,24 +56,13 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
 #define DMEM_DUMP(ptr, size, blklen)\
     _debug_mem_dump(ptr, size, blklen, __func__, __LINE__)
 
-#if defined MICROBIT_H && defined __PXT_H
-/** PXT Header defines uBit as a global variable */
+#if defined MICROBIT_H
+/* pxt.h defines uBit as a global variable, it seems that Microbit will become 
+ * unresponsive if more than one instance of MicroBit is defined. This forces the
+ * user to declare a global 'uBit' if not already present */
 #undef printf
 #define DPRINT(msg) uBit.serial.printf("DEBUG: %s: %d: %s\r\n",__func__,__LINE__,msg)
 #define DPRINTF(...) uBit.serial.printf("DEBUG: " __VA_ARGS__)
-
-#elif define MICROBIT_H
-#define DPRINT(msg) \
-    do { \
-        MicroBit __uBit__; \
-        __uBit__.serial.printf("DEBUG: %s: %d: %s\r\n",__func__,__LINE__,msg); \
-    } while (0)
-
-#define DPRINTF(...) \
-    do { \
-        MicroBit __uBit__;\
-        __uBit__.serial.printf("DEBUG: " __VA_ARGS__); \
-    } while (0)
 
 #else
 #define DPRINT(msg) printf("DEBUG: %s: %d: %s\n",__func__,__LINE__, msg)
@@ -87,7 +76,8 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
  *  DEBUG is defined. This allows the removal of debug prints by removing the 
  *  definition of DEBUG.
  *  If compiled for the MircoBit, would print to serial instead of standard 
- *  output.
+ *  output, given that a MicroBit instance is defined as 'uBit' 
+ *  (ie. Microbit uBit; is in the scope of the macro.)
  *  
  *  @param msg The debugging message to print
 */
@@ -98,8 +88,11 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
  *  function name and line number.Debug print is only defined when
  *  DEBUG is defined. This allows the removal of debug prints by removing the 
  *  definition of DEBUG.
+ *
  *  If compiled for the MircoBit, would print to serial instead of standard 
- *  output.
+ *  output, given that a MicroBit instance is defined as 'uBit' 
+ *  (ie. Microbit uBit; is in the scope of the macro.)
+ *  
  *  
  *  @param ... printf arguments for printing.
  *  @sa printf
@@ -114,8 +107,10 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
  *  illegible.
  *  Debug memory dump is only wqdefined when DEBUG is defined. 
  *  This allows the removal of debug prints by removing the definition of DEBUG.
+ *
  *  If compiled for the MircoBit, would print to serial instead of standard 
- *  output.
+ *  output, given that a MicroBit instance is defined as 'uBit' 
+ *  (ie. Microbit uBit; is in the scope of the macro.)
  *  
  *  @param ptr Pointer to the memory to be dumped.
  *  @param size Size of the memory to be dumped in bytes.
