@@ -7,6 +7,7 @@
 
 //Debugging Utilities
 #ifdef MICROBIT_H
+#undef printf
 #define PRINTF uBit.serial.printf
 #else
 #define PRINTF printf
@@ -30,15 +31,17 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, \
         { PRINTF("\r\nDEBUG:%#08lx: ", (unsigned long) pos ); }
 
         if(blk <= sizeof(char)) 
-            PRINTF("%" "hh" "X",  *((unsigned char *) ptr + pos)); 
+            PRINTF("%" "2hh" "X",  *((unsigned char *) ptr + pos)); 
         else if(blk <= sizeof(short)) 
-            PRINTF("%" "h" "X",  *((unsigned short *) ptr + pos)); 
+            PRINTF("%" "4h" "X",  *((unsigned short *) ptr + pos)); 
         else if(blk <= sizeof(int)) 
-            PRINTF("%" "" "X",  *((unsigned int *) ptr + pos)); 
+            PRINTF("%" "8" "X",  *((unsigned int *) ptr + pos)); 
         else if(blk <= sizeof(long)) 
-            PRINTF("%" "l" "X",  *((unsigned long *) ptr + pos)); 
+            PRINTF("%" "8l" "X",  *((unsigned long *) ptr + pos)); 
         else if(blk <= sizeof(long long)) 
-            PRINTF("%" "ll" "X",  *((unsigned long long *) ptr + pos)); 
+ *  If compiled for the MircoBit, would print to serial instead of standard 
+ *  output.
+            PRINTF("%" "16ll" "X",  *((unsigned long long *) ptr + pos)); 
         
         PRINTF(" "); //Space between blocks
     }

@@ -56,7 +56,7 @@ void _debug_mem_dump(void *mptr, size_t len, size_t blk, const char *fname, int 
 #define DMEM_DUMP(ptr, size, blklen)\
     _debug_mem_dump(ptr, size, blklen, __func__, __LINE__)
 
-#if defined MICROBIT_H
+#ifdef MICROBIT_H
 /* pxt.h defines uBit as a global variable, it seems that Microbit will become 
  * unresponsive if more than one instance of MicroBit is defined. This forces the
  * user to declare a global 'uBit' if not already present */
