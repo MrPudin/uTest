@@ -16,7 +16,7 @@ SRC_TEST := $(wildcard $(TEST_DIR)*.c)
 
 VPATH := $(VPATH) $(SRC_DIR) $(TEST_DIR)
 
-CFLAGS := -Wall -Werror -I$(SRC_DIR)
+CFLAGS := -std=c11 -Wall -Werror -I$(SRC_DIR)
 COMPILE := gcc $(CFLAGS) -c 
 LINK := gcc $(CFLAGS)
 DEPEND := gcc $(CFLAGS) -M
@@ -25,6 +25,7 @@ DEPEND := gcc $(CFLAGS) -M
 .DEFAULT: test
 
 test: $(PRODUCT_TEST)
+	./$(PRODUCT_TEST)
 docs: $(PRODUCT_DOCS)
 	
 $(PRODUCT_DOCS): $(DOX_CONFIG) $(SRC)

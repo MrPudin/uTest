@@ -175,17 +175,17 @@ typedef struct test_state_t TestState;
 
 /* Defining thread_local for thread safety.*/
 #ifndef thread_local
-#elif defined __GNUC__
-    #define thread_local __thread
-#elif __STDC_VERSION__ >= 201112L
-    #define thread_local _Thread_local
-#elif defined(_MSC_VER)
-    #define thread_local __declspec(thread)
-#else
-    #warn Cannot define thread_local. uTest will NOT be thread safe.
-    #define thread_local //thread_local expands to nothing
+    #if defined __GNUC__
+        #define thread_local __thread
+    #elif __STDC_VERSION__ >= 201112L
+        #define thread_local _Thread_local
+    #elif defined(_MSC_VER)
+        #define thread_local __declspec(thread)
+    #else
+        #warn Cannot define thread_local. uTest will NOT be thread safe.
+        #define thread_local //thread_local expands to nothing
+    #endif /* if defined __GNUC__ */
 #endif /* ifndef thread_local */
-
 
 /** @private */
 TestState *_test_setup();
@@ -199,7 +199,9 @@ TestState *_test_setup();
 */
 #define TEST_BEGIN \
     TestState *_test_state = _test_setup();
-
+    
+/** @private */
+void _test_report(TestState *state);
 /** @private */
 void _test_run(TestState *tstate, TestFunc *tfunc, const char *fname);
 
@@ -212,12 +214,14 @@ void _test_run(TestState *tstate, TestFunc *tfunc, const char *fname);
  *
  * @param tfunc The test function to run. It has to be of type void (tfunc)()
 */
-#define TEST(tfunc) _test_run(_test_state, tfunc, #tfunc);
+#define TEST(tfunc) \
+    do{ \
+        _test_run(_test_state, tfunc, #tfunc); \
+        _test_report(_test_state); \
+    } while(0)
 
 /** @private */
-void _test_report(TestState *state);
-/** @private */
-void _test_cleanup(TestState **state);
+void _test_end(TestState **state);
 /** @def TEST_END 
  *  Use this macro after running tests:
  *       //... Run Tests
@@ -227,8 +231,7 @@ void _test_cleanup(TestState **state);
 */
 #define TEST_END \
     do{ \
-        _test_report(_test_state); \
-        _test_cleanup(&_test_state); \
+        _test_end(&_test_state); \
         _test_state = NULL; \
     }while(0)
 
@@ -244,7 +247,7 @@ void _test_fail(const char *msg, int line);
  *  
  *  @param msg A short message describing the reason why the test failed.
 */
-#define TEST_FAIL(msg) _test_fail(msg, __LINE__)
+#define TEST_FAIL(msg) _test_fail(_test_state, msg, __LINE__)
 
 /** @def TEST_TRUE
  *  Test whether the given condition is true or fail the test if proven 
@@ -320,7 +323,7 @@ void _test_fail(const char *msg, int line);
 #define TEST_MEM_EQUAL(lhs, rhs, size) \
     do{ \
         if(memcmp((void *)lhs, (void *)rhs, (size_t)size) != 0) \
-        { _test_fail("TEST_EQUAL: Arguments not equal: " #lhs " NOT EQUAL " #rhs,\
+        { _test_fail("TEST_MEM_EQUAL: Arguments not equal: " #lhs " NOT EQUAL " #rhs,\
             __LINE__); } \
     }while(0)
 
@@ -338,7 +341,7 @@ void _test_fail(const char *msg, int line);
 #define TEST_NOT_MEM_EQUAL(lhs, rhs, size)\
     do{ \
         if(memcmp((void *)lhs, (void *)rhs, (size_t)size) == 0) \
-        {_test_fail("TEST_NOT_EQUAL: Arguments equal: " #lhs " EQUAL " #rhs,\
+        {_test_fail("TEST_NOT_MEM_EQUAL: Arguments equal: " #lhs " EQUAL " #rhs,\
             __LINE__); } \
     }while(0)
 
