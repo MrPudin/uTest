@@ -73,15 +73,3 @@ Run `make docs` for documentation at `build/docs`
 
 Just include `src/utest.h` for the defintions. When compiling link against 
 `src/utest.c`
-
-### Misc
-Roses are red.
-Violets are blue.
-But Im bleeding on the inside,
-When I see you with him.
-I see you in my dreams,
-but they always end too soon.
-Come back home,
-Please.
-Im bleeding out.
-Do you even care?
